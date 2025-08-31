@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/app/components/home/JoinUcr.jsx",
+    "src/app/components/home/Gallery.jsx",
+    "src/app/components/home/Features.jsx",
+    "src/app/components/home/ExploreEvents.jsx",
+    "src/app/components/home/Blogs.jsx",
+    "src/app/components/home/Events.jsx",
+    "src/app/components/home/About.jsx",
+    "src/app/components/home/Hero.jsx",
+    "src/app/components/Footer.jsx",
+    "src/app/components/home/Services.jsx",
+    "src/app/components/BottomBar.jsx"
+  ],
+  "exclude": ["node_modules"]
+}
