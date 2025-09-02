@@ -29,7 +29,8 @@
     "react-responsive-masonry": "^2.7.1",
     "react-toastify": "^11.0.5",
     "sass": "^1.91.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/node": "22.13.10",

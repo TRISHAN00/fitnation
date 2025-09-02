@@ -19,6 +19,8 @@ export class ShurjoPay {
       }),
     });
 
+    console.log(response);
+
     if (!response.ok) {
       throw new Error(`Failed to get auth token: ${response.statusText}`);
     }
@@ -26,26 +28,8 @@ export class ShurjoPay {
     return response.json();
   }
 
-  async ensureValidToken() {
-    const now = new Date();
-
-    if (!this.token || !this.tokenExpiry || now >= this.tokenExpiry) {
-      const authResponse = await this.getAuthToken();
-
-      if (authResponse.sp_code !== "200") {
-        throw new Error(`Authentication failed: ${authResponse.message}`);
-      }
-
-      this.token = authResponse.token;
-      this.storeId = authResponse.store_id;
-      this.tokenExpiry = new Date(
-        now.getTime() + (authResponse.expires_in - 60) * 1000
-      );
-    }
-  }
-
   async initiatePayment(paymentData) {
-    await this.ensureValidToken();
+    // await this.ensureValidToken();
 
     const payload = {
       prefix: this.config.prefix,
@@ -53,6 +37,7 @@ export class ShurjoPay {
       store_id: this.storeId,
       ...paymentData,
     };
+
 
     const response = await fetch(`${this.config.baseUrl}/api/secret-pay`, {
       method: "POST",
@@ -63,6 +48,8 @@ export class ShurjoPay {
       body: JSON.stringify(payload),
     });
 
+    console.log(response, "api secret key");
+
     if (!response.ok) {
       const err = await response.text();
       throw new Error(`Payment initiation failed: ${response.status} - ${err}`);
@@ -72,8 +59,6 @@ export class ShurjoPay {
   }
 
   async verifyPayment(orderId) {
-    await this.ensureValidToken();
-
     const response = await fetch(`${this.config.baseUrl}/api/verification`, {
       method: "POST",
       headers: {
@@ -82,6 +67,8 @@ export class ShurjoPay {
       },
       body: JSON.stringify({ order_id: orderId }),
     });
+
+    console.log(response);
 
     if (!response.ok) {
       throw new Error(`Payment verification failed: ${response.statusText}`);

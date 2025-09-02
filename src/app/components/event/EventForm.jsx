@@ -17,7 +17,6 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
     km: kmParam,
     gender: "",
     nid: "",
-    payment_method: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -28,7 +27,6 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
   };
 
   const handleSubmit = async (e) => {
-    console.log("clicked");
     e.preventDefault();
     setLoading(true);
 
@@ -40,17 +38,36 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
         return;
       }
 
-      const body = { ...formData };
-      delete body.file; // Remove file for now, handle separately if needed
+      // Trim spaces from form fields to prevent issues with extra spaces
+      const cleanedFormData = {
+        name: formData.name.trim(),
+        amount: priceParam.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        emc: formData.emc.trim(),
+        country: formData.country.trim(),
+        organization: formData.organization ? formData.organization.trim() : "", 
+        position: formData.position ? formData.position.trim() : "", 
+        date_of_birth: formData.date_of_birth.trim(),
+        t_shirt_size: formData.t_shirt_size.trim(),
+        km: formData.km.trim(),
+        gender: formData.gender.trim(),
+        nid: formData.nid ? formData.nid.trim() : "",
+      };
+
+      console.log("Sending data:", JSON.stringify(cleanedFormData));
+
+      const body = { ...cleanedFormData };
 
       const res = await fetch("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify(body), // Make sure to stringify the body
       });
 
       if (!res.ok) {
         const errorData = await res.json();
+        console.error("API Error:", errorData); // Log the error response
         throw new Error(errorData.error || `API Error: ${res.status}`);
       }
 
@@ -63,7 +80,7 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
           JSON.stringify({
             orderId: data.orderId,
             sp_order_id: data.sp_order_id,
-            formData: formData,
+            formData: cleanedFormData,
           })
         );
 
@@ -71,9 +88,9 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
       } else {
         alert("❌ Payment initiation failed.");
       }
-    } catch (err) {
-      console.error("Payment error:", err);
-      alert(`Payment failed: ${err.message}`);
+    } catch (error) {
+      console.error("Error:", error.message); // General error logging
+      alert(`Error: ${error.message}`);
     }
 
     setLoading(false);
@@ -133,18 +150,6 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
             onChange={handleChange}
             className="w-full p-2 border"
             required
-          />
-        </label>
-
-        <label className="block">
-          Full Address
-          <input
-            type="text"
-            name="full_address"
-            placeholder="Full Address"
-            value={formData.full_address}
-            onChange={handleChange}
-            className="w-full p-2 border"
           />
         </label>
 

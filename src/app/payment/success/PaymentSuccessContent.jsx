@@ -1,7 +1,5 @@
 "use client";
 
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { Check } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,18 +16,7 @@ export default function PaymentSuccessContent() {
       setLoading(false);
       return;
     }
-
-    const verificationKey = `verified-${orderId}`;
-    const alreadyVerified = sessionStorage.getItem(verificationKey);
-
-    if (!alreadyVerified) {
-      sessionStorage.setItem(verificationKey, "processing");
-      verifyPayment(orderId)
-        .then(() => sessionStorage.setItem(verificationKey, "completed"))
-        .catch(() => sessionStorage.removeItem(verificationKey));
-    } else {
-      setLoading(false);
-    }
+    verifyPayment(orderId);
   }, [searchParams]);
 
   const verifyPayment = async (orderId) => {
@@ -40,7 +27,8 @@ export default function PaymentSuccessContent() {
         body: JSON.stringify({ order_id: orderId }),
       });
 
-      if (!res.ok) throw new Error(`Payment verification failed: ${res.status}`);
+      if (!res.ok)
+        throw new Error(`Payment verification failed: ${res.status}`);
       const data = await res.json();
       setVerification(data);
 
@@ -55,36 +43,36 @@ export default function PaymentSuccessContent() {
       }
 
       // 1️⃣ Send confirmation email
-      try {
-        await fetch("/api/mail", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: data.email,
-            name: data.name,
-            orderId: data.order_id,
-            amount: data.amount,
-          }),
-        });
-        console.log("✅ Confirmation email sent");
-      } catch (mailError) {
-        console.error("❌ Email sending failed:", mailError);
-      }
+      // try {
+      //   await fetch("/api/mail", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({
+      //       email: data.email,
+      //       name: data.name,
+      //       orderId: data.order_id,
+      //       amount: data.amount,
+      //     }),
+      //   });
+      //   console.log("✅ Confirmation email sent");
+      // } catch (mailError) {
+      //   console.error("❌ Email sending failed:", mailError);
+      // }
 
       // 2️⃣ Send SMS via server-side route
-      try {
-        await fetch("/api/send-sms", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phone: data.phone_no,
-            message:
-              "Congratulations for Your Successful Registration. Let's make history together! Team IBHM2025",
-          }),
-        });
-      } catch (smsError) {
-        console.error("❌ SMS sending failed:", smsError);
-      }
+      // try {
+      //   await fetch("/api/send-sms", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({
+      //       phone: data.phone_no,
+      //       message:
+      //         "Congratulations for Your Successful Registration. Let's make history together! Team IBHM2025",
+      //     }),
+      //   });
+      // } catch (smsError) {
+      //   console.error("❌ SMS sending failed:", smsError);
+      // }
 
       // 3️⃣ Submit form to CMS
       try {
@@ -123,21 +111,6 @@ export default function PaymentSuccessContent() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleDownloadPDF = async () => {
-    if (!verification) return;
-    const element = document.getElementById("invoice");
-    if (!element) return;
-
-    const canvas = await html2canvas(element, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${verification?.invoice_no || "invoice"}.pdf`);
   };
 
   if (loading)

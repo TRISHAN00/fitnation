@@ -4,6 +4,10 @@ import { shurjoPay } from '../../../utils/shurjopay-config';
 export async function POST(request) {
   try {
     const { order_id } = await request.json();
+
+    console.log(order_id)
+
+    console.log(order_id)
     
     if (!order_id) {
       return NextResponse.json(
