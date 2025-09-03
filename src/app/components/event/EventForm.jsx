@@ -8,7 +8,6 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
     phone: "",
     emc: "",
     amount: priceParam,
-    full_address: "",
     country: "",
     organization: "",
     position: "",
@@ -17,6 +16,8 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
     km: kmParam,
     gender: "",
     nid: "",
+    blood_group: "",
+    full_address: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -46,8 +47,8 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
         phone: formData.phone.trim(),
         emc: formData.emc.trim(),
         country: formData.country.trim(),
-        organization: formData.organization ? formData.organization.trim() : "", 
-        position: formData.position ? formData.position.trim() : "", 
+        organization: formData.organization ? formData.organization.trim() : "",
+        position: formData.position ? formData.position.trim() : "",
         date_of_birth: formData.date_of_birth.trim(),
         t_shirt_size: formData.t_shirt_size.trim(),
         km: formData.km.trim(),
@@ -55,14 +56,12 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
         nid: formData.nid ? formData.nid.trim() : "",
       };
 
-      console.log("Sending data:", JSON.stringify(cleanedFormData));
-
       const body = { ...cleanedFormData };
 
       const res = await fetch("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body), // Make sure to stringify the body
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -74,16 +73,6 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
       const data = await res.json();
 
       if (data.redirectUrl) {
-        // Store order info in localStorage for reference
-        localStorage.setItem(
-          "pendingOrder",
-          JSON.stringify({
-            orderId: data.orderId,
-            sp_order_id: data.sp_order_id,
-            formData: cleanedFormData,
-          })
-        );
-
         window.location.href = data.redirectUrl;
       } else {
         alert("❌ Payment initiation failed.");
@@ -153,16 +142,19 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
           />
         </label>
 
+
         <label className="block">
           Country
-          <input
-            type="text"
+          <select
             name="country"
-            placeholder="Country"
             value={formData.country}
             onChange={handleChange}
-            className="w-full p-2 border"
-          />
+            className="w-full p-2 border rounded"
+            required
+          >
+            <option value="">Select Country</option>
+            <option value="Bangladesh">Bangladesh</option>
+          </select>
         </label>
 
         <label className="block">

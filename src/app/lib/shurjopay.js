@@ -1,9 +1,43 @@
+import axios from "axios";
+
 export class ShurjoPay {
   constructor(config) {
     this.config = config;
     this.token = null;
     this.tokenExpiry = null;
     this.storeId = null;
+  }
+
+  // Add this new verification method
+  async verifyPayment(orderId) {
+    console.log(orderId, 'from order id')
+    try {
+      // Get fresh token
+      const tokenResponse = await this.getAuthToken();
+
+      console.log(tokenResponse, 'from verify class')
+
+      const response = await fetch(`${this.config.baseUrl}/api/verification`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenResponse.token}`,
+        },
+        body: JSON.stringify({
+          order_id: orderId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Verification failed: ${JSON.stringify(errorData)}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Payment verification error:", error);
+      throw error;
+    }
   }
 
   async getAuthToken() {
@@ -19,7 +53,7 @@ export class ShurjoPay {
       }),
     });
 
-    console.log(response);
+    console.log(response, 'from getAuthToken');
 
     if (!response.ok) {
       throw new Error(`Failed to get auth token: ${response.statusText}`);
@@ -28,52 +62,41 @@ export class ShurjoPay {
     return response.json();
   }
 
-  async initiatePayment(paymentData) {
+  async checkout(paymentData) {
     // await this.ensureValidToken();
-
     const payload = {
-      prefix: this.config.prefix,
-      token: this.token,
-      store_id: this.storeId,
+      prefix: paymentData.prefix,
+      token: paymentData.token,
+      store_id: paymentData.store_id,
       ...paymentData,
     };
 
+    console.log(payload, "payload");
 
-    const response = await fetch(`${this.config.baseUrl}/api/secret-pay`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    const secretPayUrl = `${this.config.baseUrl}/api/secret-pay`;
+    console.log(secretPayUrl, 'secretPayUrl');
+    try {
+      const response = await axios.post(
+        secretPayUrl,
+        payload, // no need JSON.stringify, axios does it
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${paymentData.token}`,
+          },
+        }
+      );
 
-    console.log(response, "api secret key");
 
-    if (!response.ok) {
-      const err = await response.text();
-      throw new Error(`Payment initiation failed: ${response.status} - ${err}`);
+
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Payment initiation error:",
+        error.response?.data || error.message
+      );
     }
 
-    return response.json();
-  }
-
-  async verifyPayment(orderId) {
-    const response = await fetch(`${this.config.baseUrl}/api/verification`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.token}`,
-      },
-      body: JSON.stringify({ order_id: orderId }),
-    });
-
-    console.log(response);
-
-    if (!response.ok) {
-      throw new Error(`Payment verification failed: ${response.statusText}`);
-    }
-
-    return response.json();
+    return null;
   }
 }
