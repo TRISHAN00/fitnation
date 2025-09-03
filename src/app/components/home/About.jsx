@@ -2,9 +2,12 @@ import { motion } from "framer-motion";
 import parse from "html-react-parser";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FaArrowRight, FaRunning } from "react-icons/fa";
 
 export default function About({ data }) {
+  const pathname = usePathname(); // Get current path
+
   const activeRunners = data?.posts?.list?.find(
     (f) => f.data.slug === "active-runners"
   );
@@ -96,14 +99,17 @@ export default function About({ data }) {
               )}
             </div>
 
-            {/* CTA */}
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Link href={"/about-us"}></Link>
-              <button className="group flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-red-600 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
-                Learn More About Us
-                <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </motion.div>
+            {/* CTA - Only show if not on /about-us */}
+            {pathname !== "/about-us" && (
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link href={"/about-us"}>
+                  <button className="group flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-red-600 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
+                    About Us
+                    <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </Link>
+              </motion.div>
+            )}
           </motion.div>
 
           {/* Center Image Column */}
@@ -144,7 +150,6 @@ export default function About({ data }) {
           </motion.div>
 
           {/* Right Features Column */}
-
           <div className="lg:col-span-4 space-y-6">
             {/* Additional Info Card */}
             <motion.div
@@ -182,6 +187,7 @@ export default function About({ data }) {
               </p>
             </motion.div>
 
+            {/* Vision */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}

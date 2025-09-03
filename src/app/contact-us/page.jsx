@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import Info from "../components/contact/Info";
-import JoinInfo from "../components/contact/JoinInfo";
 import InnerBanner from "../components/InnerBanner";
 import AnimatedPreloader from "../components/Prealoader";
+import Info from "../components/contact/Info";
+import JoinInfo from "../components/contact/JoinInfo";
 
 export default function ContactUs() {
   const [data, setData] = useState(null);
@@ -51,7 +51,8 @@ export default function ContactUs() {
         title={innerBanner?.section_data?.subtitle}
         img={innerBanner?.images?.list?.[0]?.full_path}
       />
-      <Info info={info} />
+       <Info info={info} />
+      
       <JoinInfo data={joinUs} />
     </>
   );

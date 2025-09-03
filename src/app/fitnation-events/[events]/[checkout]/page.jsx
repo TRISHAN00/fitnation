@@ -128,7 +128,7 @@ export default function EventRegistration() {
                   </div>
                 </div>
                 )}
-              {km && (
+              {kmParam && (
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <Ruler className="text-purple-600 h-5 w-5" />
                   <div>

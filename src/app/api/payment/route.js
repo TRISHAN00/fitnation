@@ -12,10 +12,10 @@ export async function POST(request) {
   try {
     const formInput = await request.json();
 
-    console.log(formInput)
-
     // Get auth token
     const response = await shurjoPay.getAuthToken();
+
+    console.log(response, "response");
 
     // Generate unique order ID
     const uniqueOrderId = `sp${Date.now()}`;
@@ -23,7 +23,7 @@ export async function POST(request) {
     // Build payment data with proper return URLs
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const paymentData = {
-      prefix: "NOK",
+      prefix: process.env.SHURJOPAY_PREFIX,
       token: response.token,
       return_url: `${baseUrl}/payment/success`, // Your callback page
       cancel_url: `${baseUrl}/payment/cancel`, // Your cancellation page
@@ -33,6 +33,7 @@ export async function POST(request) {
       currency: "BDT",
       customer_name: formInput.name,
       customer_address: formInput.country,
+      customer_email: formInput.email,
       customer_phone: formInput.phone,
       customer_city: formInput.city || "Dhaka",
       customer_post_code: "",
@@ -40,27 +41,20 @@ export async function POST(request) {
 
       value1: JSON.stringify({
         emergency_contact: formInput.emc,
-        organization: formInput.organization,
-        position: formInput.position,
         date_of_birth: formInput.date_of_birth,
         t_shirt_size: formInput.t_shirt_size,
         km: formInput.km,
         gender: formInput.gender,
-        nid: formInput.nid,
-        email: formInput.email,
-        full_address: formInput.full_address,
         country: formInput.country,
       }),
-      value2: formInput.email,
     };
 
     // Use the checkout method from ShurjoPay class
     const paymentResponse = await shurjoPay.checkout(paymentData);
-    const afterVerify = await shurjoPay.verifyPayment(
-      paymentResponse.sp_order_id
-    );
 
-    console.log(paymentResponse.sp_order_id, "from payment api checkout");
+    console.log(paymentResponse, "paymentResponse");
+
+    console.log(paymentResponse, "from payment api checkout");
 
     return NextResponse.json({
       success: true,

@@ -109,7 +109,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center space-x-4">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                href="/events"
+                href="/fitnation-events"
                 className="relative group px-6 py-3 bg-gradient-to-r from-purple-600 to-red-600 text-white font-semibold rounded-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25"
               >
                 <span className="relative flex items-center gap-2">

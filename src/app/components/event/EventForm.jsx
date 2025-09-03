@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function EventForm({ priceParam, kmList, kmParam }) {
+export default function EventForm({ priceParam, kmParam }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -9,15 +9,10 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
     emc: "",
     amount: priceParam,
     country: "",
-    organization: "",
-    position: "",
     date_of_birth: "",
     t_shirt_size: "",
     km: kmParam,
     gender: "",
-    nid: "",
-    blood_group: "",
-    full_address: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -47,13 +42,10 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
         phone: formData.phone.trim(),
         emc: formData.emc.trim(),
         country: formData.country.trim(),
-        organization: formData.organization ? formData.organization.trim() : "",
-        position: formData.position ? formData.position.trim() : "",
         date_of_birth: formData.date_of_birth.trim(),
         t_shirt_size: formData.t_shirt_size.trim(),
         km: formData.km.trim(),
         gender: formData.gender.trim(),
-        nid: formData.nid ? formData.nid.trim() : "",
       };
 
       const body = { ...cleanedFormData };
@@ -86,7 +78,7 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
   };
 
   return (
-    <div className="min-h-screen flex items-start justify-center">
+    <div className="flex items-start justify-center">
       <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Payment Now</h2>
 
@@ -142,7 +134,6 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
           />
         </label>
 
-
         <label className="block">
           Country
           <select
@@ -155,42 +146,6 @@ export default function EventForm({ priceParam, kmList, kmParam }) {
             <option value="">Select Country</option>
             <option value="Bangladesh">Bangladesh</option>
           </select>
-        </label>
-
-        <label className="block">
-          Organization
-          <input
-            type="text"
-            name="organization"
-            placeholder="Your organization"
-            value={formData.organization}
-            onChange={handleChange}
-            className="w-full p-2 border"
-          />
-        </label>
-
-        <label className="block">
-          Position
-          <input
-            type="text"
-            name="position"
-            placeholder="Your position"
-            value={formData.position}
-            onChange={handleChange}
-            className="w-full p-2 border"
-          />
-        </label>
-
-        <label className="block">
-          NID (National ID Card)
-          <input
-            type="text"
-            name="nid"
-            value={formData.nid}
-            placeholder="Input NID Number"
-            onChange={handleChange}
-            className="w-full p-2 border"
-          />
         </label>
 
         <label className="block">

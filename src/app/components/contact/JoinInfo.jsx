@@ -1,6 +1,5 @@
 import parse from 'html-react-parser';
 import Image from 'next/image';
-import Button from '../Button';
 
 export default function JoinInfo({data}) {
   return (
@@ -32,10 +31,7 @@ export default function JoinInfo({data}) {
             <div className="text-lg text-purple-100 leading-relaxed max-w-xl">
               {parse(data?.section_data?.description || "")}
             </div>
-            
-            <div className="pt-4">
-              <Button title={'Join Now'} path={data?.section_data?.search_slug} />
-            </div>
+      
           </div>
 
           {/* Image */}

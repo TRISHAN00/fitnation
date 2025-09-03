@@ -1,12 +1,13 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import GalleryList from "../GalleryList";
 
 export default function GallerySection({ data }) {
   const [isClient, setIsClient] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const pathname = usePathname()
 
   useEffect(() => {
     setIsClient(true);

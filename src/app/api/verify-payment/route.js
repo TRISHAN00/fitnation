@@ -7,7 +7,6 @@ const shurjoPay = new ShurjoPay({
   username: process.env.SHURJOPAY_USERNAME,
   password: process.env.SHURJOPAY_PASSWORD,
 });
-
 export async function POST(request) {
   try {
     const { order_id } = await request.json();
@@ -26,6 +25,8 @@ export async function POST(request) {
     const verificationData = Array.isArray(tokenResponse)
       ? tokenResponse[0]
       : tokenResponse;
+
+    console.log(verificationData);
 
     return NextResponse.json({
       success: true,
